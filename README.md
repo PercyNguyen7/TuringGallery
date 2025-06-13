@@ -82,6 +82,7 @@ Amidst the era of (mis)information, the inability to distinguish the real from t
 
 ###  3. Known Bugs
 1. The  `after` queries are currently stored only for AI and Human, not specific to the subreddit. This means fetching from a new subreddit (when changing from image to video) would result in the wrong `after` tag being used. Hence I must store 4 different `afters` queries, one for each subreddit.
+2. There will be repeating images due to the `after` bug above, as well as the app refetches the same data after reaching the 1000 listing limit from Reddit API. 
 
 ### 4. Future Features
 The next step to this beautiful Gallery will include a login system for users to store their highscore as well as their gameplay history.  
