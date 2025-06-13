@@ -80,8 +80,10 @@ Amidst the era of (mis)information, the inability to distinguish the real from t
         - To find the embed link, you need the video ID. Finding each video's ID is difficult as the fetched data only contains the url to its YouTube video. For instance, this video url `https://www.youtube.com/watch?v=rt_O5FJcK10` has `rt_05FJcK10` as its ID. We must extract whatever comes after the `=` sign.
         - Unfortunately, the fetched YouTube URL vary from domains to shorts/videos. Example of YouTube urls are `https://www.youtube.com/watch?v=rt_O5FJcK10`, `https://www.youtube.com/shorts/PwSOZli5_xg`, or `https://youtu.be/4nrl1PNYkYQ`,             each one requiring a different approach to find its URL.
 
+###  3. Known Bugs
+1. The  `after` queries are currently stored only for AI and Human, not specific to the subreddit. This means fetching from a new subreddit (when changing from image to video) would result in the wrong `after` tag being used. Hence I must store 4 different `afters` queries, one for each subreddit.
 
-### 3. Future Additions
+### 4. Future Features
 The next step to this beautiful Gallery will include a login system for users to store their highscore as well as their gameplay history.  
 
 
@@ -148,8 +150,6 @@ Percy Nguyen: [www.percynguyen.com](https://www.percynguyen.com/)
 * []()
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
