@@ -77,7 +77,7 @@ Amidst the era of (mis)information, the inability to distinguish the real from t
           - When user changes the video playback rate (i.e 1.25 speed)   
 
       - **Non-Reddit-Hosted Videos**    
-        - Due to the majority of video embeds are from YouTube, I create a Youtube component containing the iframe linked to the embed link.
+        - As the majority of video embeds are from YouTube, I create a Youtube component containing the iframe linked to the embed link.
         - To find the embed link, you need the video ID. Finding each video's ID is difficult as the fetched data only contains the url to its YouTube video. For instance, this video url `https://www.youtube.com/watch?v=rt_O5FJcK10` has `rt_05FJcK10` as its ID. We must extract whatever comes after the `=` sign.
         - Unfortunately, the fetched YouTube URL vary from domains to shorts/videos. Example of YouTube urls are `https://www.youtube.com/watch?v=rt_O5FJcK10`, `https://www.youtube.com/shorts/PwSOZli5_xg`, or `https://youtu.be/4nrl1PNYkYQ`,             each one requiring a different approach to find its URL.
 
