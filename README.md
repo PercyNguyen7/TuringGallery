@@ -21,7 +21,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a> -->
 
-# Turing Gallery
+# About the Turing Gallery
 
 ## 1. Gameplay
 [Discover the Turing Gallery](https://turinggallery.netlify.app/)  
