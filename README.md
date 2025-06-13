@@ -36,10 +36,10 @@ Amidst the era of (mis)information, the inability to distinguish the real from t
 ## 3. Development Process
 
 ### 1. Tools
-**Design:** originally designed and assembled in Figma, with icons chosen from the [Iconify Figma plugin](https://iconify.design/). 
-**Development:** Built with React.JS, Node.JS, Javascript and styled with TailwindCSS
-**Artworks:** Pulled from Reddit API
-**Loading Gifs credit:**
+  - **Design:** originally designed and assembled in Figma, with icons chosen from the [Iconify Figma plugin](https://iconify.design/). 
+  - **Development:** Built with React.JS, Node.JS, Javascript and styled with TailwindCSS  
+  - **Artworks:** Pulled from Reddit API  
+  - **Loading Gifs credit:**  
 
 ### 2. Obstacles
 #### 1. 1000 Listings Limitation of Reddit API
