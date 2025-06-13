@@ -24,8 +24,9 @@
 # Turing Gallery
 
 ## 1. Gameplay
-[Discover the Turing Gallery](https://turinggallery.netlify.app/)
-The web application introduces their users to an infinite series of recent AI/Human artworks drawn from Reddit. Once the user finished classifying an artwork, the artwork's author and all relevant information will be revealed under the results section. 
+[Discover the Turing Gallery](https://turinggallery.netlify.app/)  
+This React web app tasks its users to classify an infinite series of artworks into either Human or AI generated categories. 
+The artwork's author and all relevant information will be revealed under the results section. 
 
 ## 2. Purpose
 The Turing Gallery arms its players with a critical mind and a skeptical eye against artificially generated content.
@@ -49,7 +50,6 @@ Amidst the era of (mis)information, the inability to distinguish the real from t
    To make this gallery seemingly infinite, the Turing Gallery will restart the fetch request from the beginning (without using any `after` query). This approach however may result in rendering previously viewed artworks.  
 
 #### 2. Data Variance & Treatment
-
 -  **Challenge:**  
    Data Variance - There are two layers of variance for each Reddit post:
 
@@ -60,8 +60,7 @@ Amidst the era of (mis)information, the inability to distinguish the real from t
    Within any subreddit, each post is unique and possesses different attributes, requiring flexible handling.
 
 -  **Solution:**  
-   Dynamic Post Classification & Rendering
-   To address the variance in data, posts are dynamically classified into images or videos.
+   Dynamic Post Classification & Rendering - To address the variance in data, posts are dynamically classified as either images, videos or video embeds.
 
    - **Images** 🖼️  
      Most image posts from Reddit contain the `post_hint` attribute with a value of `"image"`.
@@ -91,12 +90,11 @@ The next step to this beautiful Gallery will include a login system for users to
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
-This project requires you to install Node.JS, and then install its 
+This project requires you to install Node.JS.
 
 ### Installation
 You may test out the code by either
 1. Download the repo's directory via https://download-directory.github.io/ 
-   
 2. Clone the repo with
    ```sh
    git clone https://github.com/PercyNguyen7/TuringGallery
