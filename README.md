@@ -134,7 +134,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- CONTACT -->
 ## Contact
 
-Percy Nguyen: percynguyen.com
+Percy Nguyen: [www.percynguyen.com](https://www.percynguyen.com/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
