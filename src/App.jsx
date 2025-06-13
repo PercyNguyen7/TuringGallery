@@ -9,7 +9,10 @@ import YouTube from "./components/YouTube";
 import DropdownItem from "./components/DropdownItem";
 import Gallery from "./components/Gallery";
 import About from "./components/About";
-const maxFetch = 10;
+import Footer from "./components/Footer";
+import Loading from "./components/Loading";
+import GuessButton from "./components/GuessButton";
+const maxFetch = 8;
 
 function App() {
   const aiCategory = "ai";
@@ -25,7 +28,6 @@ function App() {
   const [contentType, setContentType] = useState("image");
   const firstSubReddit = contentType == "image" ? "aiArt" : "aivideos";
   const secondSubReddit = contentType == "image" ? "art" : "animations";
-  // const [subReddits, setSubReddits] = useState({ai: "aiArt", human: "art"})
   const [arts, setArts] = useState(null);
   const [afters, setAfters] = useState({ ai: "", human: "" });
   const AI_URL = `https://www.reddit.com/r/${firstSubReddit}/${currentSorts.ai}/.json?limit=${maxFetch}&after=${afters.ai}`;
@@ -33,23 +35,11 @@ function App() {
   const artArray = !arts ? [] : [...arts.ai, ...arts.human];
   // console.log(artArray);
   const currArt = artArray.length > 0 ? artArray[0] : null;
-  console.log(currArt);
+  // console.log(currArt);
   const [gallery, setGallery] = useState([]);
   // console.log(afters)
   // console.log(AI_URL);
   // console.log(HUMAN_URL);
-  // the [] means useEffect() runs only on the first render
-  // useEffect(() => {
-  //   // alert("AI: " + AI_URL + " HMAN: " + HUMAN_URL);
-  //   async function fetchAndRender() {
-  //     const data = await fetchResults(AI_URL, HUMAN_URL);
-  //     if (data) {
-  //       const { ai, human } = data;
-  //       renderResults(ai, human);
-  //     }
-  //   }
-  //   fetchAndRender();
-  // }, [currentSorts]);
   // ************** QQQQ
   useEffect(() => {
     async function fetchAndRenderOne() {
@@ -58,13 +48,14 @@ function App() {
       setLoading(true);
       const data = await fetchRes(url);
       if (data) {
-        renderRes(type, data);
+        updateData(type, data);
       }
       setLoading(false);
     }
     fetchAndRenderOne();
   }, [currentSorts, round, contentType]);
 
+  // fetch and return the Reddit data according to the url
   async function fetchRes(url) {
     try {
       const res = await fetch(url);
@@ -72,15 +63,15 @@ function App() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
+      console.log("Check out the fetched data");
       console.log(data.data);
-
       return data;
     } catch (e) {
       console.error("Fetch failed:", e);
       throw e; // propagate the error
     }
   }
-  function renderRes(type, data) {
+  function updateData(type, data) {
     if (type === humanCategory) {
       // console.log(type + " is being updated");
       setAfters((prev) => ({
@@ -142,18 +133,8 @@ function App() {
       if (count === artNum) {
         break;
       }
+      // For Text content
       // if (currPost.is_self === true) {
-      //   tempArr.push({
-      //     subreddit: subredditNum,
-      //     type: currPost.post_hint,
-      //     src: src,
-      //     id: currPost.id,
-      //     title: currPost.title,
-      //     text: currPost.selftext ? currPost.selftext : "",
-      //     author: currPost.author,
-      //     thumbnail: currPost.thumbnail,
-      //   });
-      //   count++;
       // }
       if (currPost.post_hint === "image") {
         if (
@@ -164,7 +145,7 @@ function App() {
         ) {
           continue;
         }
-        console.log("art index: " + n);
+        // console.log("art index: " + n);
         if (currPost.url_overridden_by_dest != undefined) {
           src = currPost.url_overridden_by_dest;
         } else if (currPost.thumbnail != undefined) {
@@ -200,7 +181,7 @@ function App() {
         ) {
           continue;
         }
-        console.log("art index: " + n);
+        // console.log("art index: " + n);
         tempArr.push({
           category: postCategory,
           domain: currPost.domain,
@@ -232,7 +213,7 @@ function App() {
         ) {
           continue;
         }
-        console.log("art index: " + n);
+        // console.log("art index: " + n);
 
         src = currPost.secure_media.reddit_video.fallback_url;
         tempArr.push({
@@ -275,8 +256,8 @@ function App() {
   }
   return (
     <>
-      <div className="bg-[#EFE9E1] flex justify-center w-full">
-        <div className=" h-min p-3 sm:max-w-200 w-full">
+      <div className="bg-[#EFE9E1] flex flex-col  items-center w-full min-h-screen">
+        <div className=" h-min p-3 sm:max-w-200 w-full ">
           <main className=" h-min  mb-20">
             <section className="flex flex-row w-full items-between justify-between">
               <div className="">
@@ -378,7 +359,6 @@ function App() {
               <h1 className="inter-medium text-[#5C4E41] text-3xl sm:text-5xl xl:text-6xl mb-2 sm:m-4 uppercase">
                 Turing Gallery
               </h1>
-
               <h4 className="inter-light text-[#5C4E41] text:lg sm:text-xl xl:text-2xl mb-2">
                 Can you spot if this artwork was made by human or machine?
               </h4>
@@ -444,115 +424,20 @@ function App() {
           </main>
           <Gallery gallery={gallery}></Gallery>
         </div>
+        <Footer></Footer>
       </div>
-      <footer className="inter-medium text-lg bg-[#899481] text-[#F3F3F3] py-2 text-center">
-        <span>
-          Made by human developer{" "}
-          <a href="https://www.percynguyen.com" className="underline">
-            Percy Nguyen
-          </a>{" "}
-        </span>
-      </footer>
     </>
   );
-}
-function Loading() {
-  const falloutSrc = "./assets/img/standby/dark/fallout_standby.gif";
-  const afraidSrc = "./assets/img/standby/dark/afraid_standby.gif";
-  const runningSrc = "./assets/img/standby/dark/running_standby.gif";
-  const staticSrc = "./assets/img/standby/dark/static_standby.gif";
-  const wormholeSrc = "./assets/img/standby/dark/wormhole_standby.gif";
-  const eyeSrc = "./assets/img/standby/dark/eye_standby.gif";
-
-  const whaleSrc = "./assets/img/standby/light/whale_standby.gif";
-  const fingerSrc = "./assets/img/standby/light/finger_standby.gif";
-  const whiteSrc = "./assets/img/standby/light/white_standby.gif";
-  const worldSrc = "./assets/img/standby/light/world_standby.gif";
-
-  const lightStandbys = [whaleSrc, fingerSrc, whiteSrc, worldSrc];
-  const darkStandbys = [
-    falloutSrc,
-    afraidSrc,
-    staticSrc,
-    wormholeSrc,
-    runningSrc,
-  ];
-  function chooseStandbySrc() {
-    const specialStandbyChance = 0.01;
-
-    const randomNum = Math.random();
-    if (randomNum >= specialStandbyChance) {
-      const randomIndex = Math.floor(Math.random() * lightStandbys.length);
-      return lightStandbys[randomIndex];
-    } else {
-      return eyeSrc;
-    }
-  }
-
-  return (
-    <div className="">
-      <figure className="h-full md:max-h-[60vh] slide-in-bck-center ">
-        <img
-          className="object-contain w-max h-full rounded-2xl mx-auto shadow-xl/30 shadow-[#899481]"
-          src={chooseStandbySrc()}
-          alt=""
-        />
-      </figure>
-    </div>
-  );
-}
-//https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-function GuessButton({ children, onClick, choice, disabled }) {
-  return (
-    <div
-      className={
-        "rounded-full aspect-square flex justify-center items-center transition-all " +
-        (disabled
-          ? "opacity-30 pointer-none grayscale-0"
-          : "cursor-pointer w-25")
-      }
-      onClick={() => (!disabled ? onClick(choice) : null)}
-    >
-      <figure
-        className={
-          "w-full  shadow-xl/30 shadow-[#899481] rounded-full " +
-          (disabled ? " " : "hover:w-9/10")
-        }
-      >
-        {children}
-      </figure>
-    </div>
-  );
-}
-
-function shuffleArr(array) {
-  let currentIndex = array.length;
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-    // Pick a remaining element...
-    let randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-  return array;
 }
 
 export default App;
 
-//
 // async function fetchResults(ai_url, human_url) {
 //   try {
 //     const responses = await Promise.all([fetch(ai_url), fetch(human_url)]);
 
 //     if (responses.every((res) => res.ok)) {
 //       const [ai, human] = await Promise.all(responses.map((r) => r.json()));
-
 //       console.log(ai.data.children);
 //       console.log(human.data.children);
 //       // console.log(human.data.after);
@@ -566,7 +451,7 @@ export default App;
 //     console.error(e);
 //   }
 // }
-// function renderResults(ai, human) {
+// function updateDataults(ai, human) {
 //   setAfters({
 //     ...afters,
 //     ai: ai.data.after,
@@ -577,7 +462,6 @@ export default App;
 //     human: getArts(humanCategory, human.data.children, 0),
 //     ai: getArts(aiCategory, ai.data.children, 1),
 //   };
-
 //   setArts(tempArts);
 // }
 
@@ -600,7 +484,7 @@ export default App;
 //       console.log(human.data.children);
 //       console.log(human.data.after);
 //       console.log(ai.data.after);
-//       renderResults(ai, human);
+//       updateDataults(ai, human);
 //       console.log(afters);
 //     })
 //     .catch((e) => {

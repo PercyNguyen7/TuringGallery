@@ -106,7 +106,7 @@ function Post({ post }) {
   const errorUrl =
     "https://images.unsplash.com/photo-1532003885409-ed84d334f6cc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
   return (
-    <div className="flex flex-col sm:flex-row border-[#5C4E41] py-4 gap-4 ">
+    <section className="flex flex-col sm:flex-row border-[#5C4E41] py-4 gap-4 ">
       <figure className="aspect-square min-w-50 w-50 ">
         <img
           className="object-cover w-full h-full aspect-square rounded-xl"
@@ -128,6 +128,9 @@ function Post({ post }) {
           </div>
           <div className="inter-light rounded-full border-1 border-[#5C4E41] px-2 mr-2 text-sm">
             {post.correct ? "CORRECT" : "INCORRECT"}
+          </div>
+          <div className="inter-light rounded-full border-1 border-[#5C4E41] px-2 mr-2 text-sm">
+            {post.contentType === "image" ? "Image" : "Video"}
           </div>
         </div>
 
@@ -153,7 +156,7 @@ function Post({ post }) {
           Source
         </a>
       </div>
-    </div>
+    </section>
   );
 }
 function timeSince(date) {
