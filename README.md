@@ -23,94 +23,75 @@
 
 # Turing Gallery
 
-## Gameplay
+## 1. Gameplay
 [Discover the Turing Gallery](https://turinggallery.netlify.app/)
 The web application introduces their users to an infinite series of recent AI/Human artworks drawn from Reddit. Once the user finished classifying an artwork, the artwork's author and all relevant information will be revealed under the results section. 
 
-## Purpose
+## 2. Purpose
 The Turing Gallery arms its players with a critical mind and a skeptical eye against artificially generated content.
 Amidst the era of (mis)information, the inability to distinguish the real from the artificial may pervert one's truth and reality.
 
 <!-- USAGE EXAMPLES -->
-## Development
+## 3. Development Process
 
 ### 1. Tools
-Design: originally designed and assembled in Figma, with icons chosen from the [Iconify Figma plugin](https://iconify.design/). 
-Development: Built with React.JS, Node.JS, Javascript and styled with TailwindCSS
+**Design:** originally designed and assembled in Figma, with icons chosen from the [Iconify Figma plugin](https://iconify.design/). 
+**Development:** Built with React.JS, Node.JS, Javascript and styled with TailwindCSS
+**Artworks:** Pulled from Reddit API
+**Loading Gifs credit:**
 
-### 2. Challenges
+### 2. Obstacles
 #### 1. 1000 Listings Limitation of Reddit API
-**Challenge:** 
-To avoid pulling the same information every time, I used the `after` query to fetch the next batch of artworks. However, the API call eventually reach the 1000 listings limit and return no data.   
+- **Challenge:**   
+   The API call eventually reach the 1000 listings limit and return no data.   
 
-**Solution:** 
-To make this gallery seemingly infinite, the Turing Gallery will fetch restart the fetch from the beginning which does may however render previously viewed artworks.  
+-  **Solution:**   
+   To make this gallery seemingly infinite, the Turing Gallery will restart the fetch request from the beginning (without using any `after` query). This approach however may result in rendering previously viewed artworks.  
 
-**Challenge:** Data Variance - There are two layers of variance for each Reddit post:
+#### 2. Data Variance & Treatment
 
-1. **Subreddit Variance**  
+-  **Challenge:**  
+   Data Variance - There are two layers of variance for each Reddit post:
+
+    - **Subreddit Variance**  
    Each subreddit tends to have its own posting traits. This makes navigating between subreddits time-consuming and demanding careful handling.
 
-2. **Individual Post Variance**  
+    - **Individual Post Variance**  
    Within any subreddit, each post is unique and possesses different attributes, requiring flexible handling.
 
-**Solution:**  
-Dynamic Post Classification & Rendering
- * To address the variance in data, posts are dynamically classified into images or videos.
+-  **Solution:**  
+   Dynamic Post Classification & Rendering
+   To address the variance in data, posts are dynamically classified into images or videos.
 
-   #### 🖼️ Images
-   Most image posts from Reddit contain the `post_hint` attribute with a value of `"image"`.
-   When this is detected, the Gallery renders the **Image** component.
+   - **Images** 🖼️  
+     Most image posts from Reddit contain the `post_hint` attribute with a value of `"image"`.
+     When this is detected, the Gallery renders the **Image** component.
 
-   #### 🎥 Videos
-   Videos are more complex, often falling into subcategories. Two useful classifications are:
+   -  **Videos** 🎥 
+      Videos are more complex, often falling into subcategories. Two useful classifications are:
+      - **Reddit-Hosted Videos:**  
+        - Hosting these videos is a trivial task. I use a `video` tag, with the src attribute as the `fallback_url` from the original data and voilà.   
+        - However, reddit's hosted video do not contain any audios so I had to retrieve the post URL (i.e `https://v.redd.it/690bjsriel6f1`) and add `DASH_AUDIO_128.mp4` to get the audio source. A hidden `audio` tag with this source will do            the trick and we synergize it to play when:  
+          - The video is played   
+          - The video is paused   
+          - When user changes the video playback rate (i.e 1.25 speed)   
 
-- **Reddit-Hosted Videos**
-   These videos do not contains audios, and while it easy easy to host them locally (via their `fallback_url` tag), I had to retrieve their audio manually, hide it, then synergize it to play whenever the user clicks on a video.
-  
-- **Non-Reddit-Hosted Videos**
-   Due to majority of video embeds being from youtube, I create a YoutubeEmbed component which contains the embed code with the appropriate source. Even finding the youtube video's ID is difficult, as each subreddit data never contains the embed source, but rather contains a youtube link with the youtube ID. This YouTube ID is then deduced from various sources
-
-   https://www.youtube.com/watch?v=rt_O5FJcK10, https://www.youtube.com/shorts/PwSOZli5_xg, or https://youtu.be/4nrl1PNYkYQ.
-
-
-### 3. Future Development
-#### In the foreseeable future, the Gallery will include a login system for users to store their point as well as their gameplay history.  
-
-
-<!-- ABOUT THE PROJECT -->
-<!--## About The Project
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com) 
-
-Here's a blank template to get started. To avoid retyping too much info, do a search and replace with your text editor for the following: `PercyNguyen7`, `COMP348/Assignments/A1`, , `PercyNguyen`, `project_title`, `project_description`
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+      - **Non-Reddit-Hosted Videos**    
+        - Due to the majority of video embeds are from YouTube, I create a Youtube component containing the iframe linked to the embed link.
+        - To find the embed link, you need the video ID. Finding each video's ID is difficult as the fetched data only contains the url to its YouTube video. For instance, this video url `https://www.youtube.com/watch?v=rt_O5FJcK10` has `rt_05FJcK10` as its ID. We must extract whatever comes after the `=` sign.
+        - Unfortunately, the fetched YouTube URL vary from domains to shorts/videos. Example of YouTube urls are `https://www.youtube.com/watch?v=rt_O5FJcK10`, `https://www.youtube.com/shorts/PwSOZli5_xg`, or `https://youtu.be/4nrl1PNYkYQ`,             each one requiring a different approach to find its URL.
 
 
-
-### Built With
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url] -->
+### 3. Future Additions
+The next step to this beautiful Gallery will include a login system for users to store their highscore as well as their gameplay history.  
 
 
 <!-- GETTING STARTED -->
-## Getting Started
-This is an example of how you may give instructions on setting up your project locally.
+## 4. Getting Started
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
-This project requires to be run on a Linux machine, or run on Ubuntu
+This project requires you to install Node.JS, and then install its 
 
 ### Installation
 You may test out the code by either
@@ -118,53 +99,14 @@ You may test out the code by either
    
 2. Clone the repo with
    ```sh
-   git clone https://github.com/PercyNguyen7/COMP348/Assignments/A1.git
+   git clone https://github.com/PercyNguyen7/TuringGallery
    ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Usage
-
-### Compilation
-Once downloaded, compile it and run the following code in your terminal
-```sh
-  gcc -o kode -Wall kode.c fileread.c wreplace.c ui.c 
-   ```
-
-
 
 ### Running Project
-You can run the project with the following command and parameters
-`./kode <command> <word> <file>`
+To start the project, use the command
+`npx vite`
 
-| Parameters | Description |
-| ------------- | ------------- |
-| command| Either RC, RI, UK or UM |
-| word | The word you want to redact/unmask in the text file |
-| file | The file name |
 
-| Command  | Description |
-| ------------- | ------------- |
-| RC | Redact Case Sensitive |
-| RI | Redact Case Ignored |
-| UK | Unmask Keep Case |
-| UM | Unmask Special Case |
-
-If you have Valgrind installed, you may also check for memory leak via the following line before running the program:
-```sh
-    valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./kode <command> <word> <file>
-```
-<!-- ROADMAP -->
-<!-- ## Roadmap
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/PercyNguyen7/COMP348/Assignments/A1/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
@@ -194,7 +136,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- CONTACT -->
 ## Contact
 
-Project Link: [https://github.com/PercyNguyen7/COMP348/Assignments/A1](https://github.com/PercyNguyen7/COMP348/Assignments/A1)
+Percy Nguyen: percynguyen.com
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
