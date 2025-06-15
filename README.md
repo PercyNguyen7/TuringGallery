@@ -24,7 +24,7 @@
 # About the Turing Gallery
 
 ## 1. Gameplay
-Discover the [Turing Gallery](https://turinggallery.netlify.app/) deployed!
+Discover the [Turing Gallery](https://turinggallery.netlify.app/) deployed!  
 This React web app tasks its users to classify an infinite series of artworks into either Human or AI generated categories. 
 The artwork's author and all relevant information will be revealed under the results section. 
 
