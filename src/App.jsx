@@ -26,12 +26,15 @@ function App() {
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
   const [contentType, setContentType] = useState("image");
-  const firstSubReddit = contentType == "image" ? "aiArt" : "aivideos";
-  const secondSubReddit = contentType == "image" ? "art" : "animations";
+  const curAiSubreddit = contentType == "image" ? "aiArt" : "aivideos";
+  const curHumanSubreddit = contentType == "image" ? "art" : "animations";
   const [arts, setArts] = useState(null);
-  const [afters, setAfters] = useState({ ai: "", human: "" });
-  const AI_URL = `https://www.reddit.com/r/${firstSubReddit}/${currentSorts.ai}/.json?limit=${maxFetch}&after=${afters.ai}`;
-  const HUMAN_URL = `https://www.reddit.com/r/${secondSubReddit}/${currentSorts.human}/.json?limit=${maxFetch}&after=${afters.human}`;
+  const [afters, setAfters] = useState({
+    ai: { aiArt: "", aivideos: "" },
+    human: { art: "", animations: "" },
+  });
+  const AI_URL = `https://www.reddit.com/r/${curAiSubreddit}/${currentSorts.ai}/.json?limit=${maxFetch}&after=${afters.ai[curAiSubreddit]}`;
+  const HUMAN_URL = `https://www.reddit.com/r/${curHumanSubreddit}/${currentSorts.human}/.json?limit=${maxFetch}&after=${afters.human[curHumanSubreddit]}`;
   const artArray = !arts ? [] : [...arts.ai, ...arts.human];
   // console.log(artArray);
   const currArt = artArray.length > 0 ? artArray[0] : null;
@@ -55,6 +58,26 @@ function App() {
     fetchAndRenderOne();
   }, [currentSorts, round, contentType]);
 
+  function resetAfters(category) {
+    if (category === "ai") {
+      setAfters((prev) => ({
+        ...prev,
+        human: {
+          ...prev.human,
+          [curHumanSubreddit]: "",
+        },
+      }));
+    } else if (category === "human") {
+      setAfters((prev) => ({
+        ...prev,
+        ai: {
+          ...prev.ai,
+          [curAiSubreddit]: "",
+        },
+      }));
+    }
+  }
+
   // fetch and return the Reddit data according to the url
   async function fetchRes(url) {
     try {
@@ -76,7 +99,10 @@ function App() {
       // console.log(type + " is being updated");
       setAfters((prev) => ({
         ...prev,
-        human: data.data.after == null ? "" : data.data.after,
+        human: {
+          ...prev.human,
+          [curHumanSubreddit]: data.data.after == null ? "" : data.data.after,
+        },
       }));
       setArts({
         ai: [],
@@ -87,7 +113,10 @@ function App() {
       // console.log(type + " is being updated");
       setAfters((prev) => ({
         ...prev,
-        ai: data.data.after == null ? "" : data.data.after,
+        ai: {
+          ...prev.ai,
+          [curAiSubreddit]: data.data.after == null ? "" : data.data.after,
+        },
       }));
       setArts({
         ai: getArts(aiCategory, data.data.children, 1),
@@ -125,8 +154,9 @@ function App() {
     const tempArr = [];
     for (let n = 0; n < maxFetch; n++) {
       let src;
+      // if data does not exist then we reset afters
       if (!allPosts[n].data) {
-        setAfters({ ai: "", human: "" });
+        resetAfters(postCategory);
         return;
       }
       const currPost = allPosts[n].data;
@@ -335,7 +365,7 @@ function App() {
                   <DropdownItem
                     onSelect={() => {
                       setContentType("image");
-                      setAfters({ ai: "", human: "" });
+                      // resetAfters();
                     }}
                     isSelected={contentType === "image"}
                   >
@@ -345,7 +375,7 @@ function App() {
                   <DropdownItem
                     onSelect={() => {
                       setContentType("video");
-                      setAfters({ ai: "", human: "" });
+                      // resetAfters();
                     }}
                     isSelected={contentType === "video"}
                   >
