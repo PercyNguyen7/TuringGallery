@@ -3,8 +3,8 @@ export async function handler(event, context) {
   const sort = event.queryStringParameters.sort;
   const limit = event.queryStringParameters.limit;
   const after = event.queryStringParameters.after;
-  const url = `https://www.reddit.com/r/${subReddit}/${sort}.json?limit=${limit}&after=${after}`;
-
+  // const url = `https://www.reddit.com/r/${subReddit}/${sort}.json?limit=${limit}&after=${after}`;
+const url = "https://www.reddit.com/r/javascript.json";
   try {
     const response = await fetch(url, {
       headers: {
