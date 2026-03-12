@@ -25,7 +25,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
-  const [contentType, setContentType] = useState("video");
+  const [contentType, setContentType] = useState("image");
   const curAiSubreddit = contentType == "image" ? "aiArt" : "aivideos";
   const curHumanSubreddit = contentType == "image" ? "art" : "animations";
   const [arts, setArts] = useState(null);

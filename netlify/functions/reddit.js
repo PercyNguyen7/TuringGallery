@@ -3,17 +3,17 @@ export async function handler(event, context) {
   const sort = event.queryStringParameters.sort;
   const limit = event.queryStringParameters.limit;
   const after = event.queryStringParameters.after;
-  const url = `https://www.reddit.com/r/${subReddit}/${sort}/.json?limit=${limit}&after=${after}`;
+  const url = `https://www.reddit.com/r/${subReddit}/${sort}.json?limit=${limit}&after=${after}`;
 
   try {
     const response = await fetch(url, {
       headers: {
-        "User-Agent": "my-app",
+        "User-Agent": "turing-gallery/1.0",
       },
     });
 
     const data = await response.json();
-
+    console.log(data);
     return {
       statusCode: 200,
       headers: {
