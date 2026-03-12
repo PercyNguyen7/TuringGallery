@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
+import { extractYoutubeId } from "./services/utilitiesService";
 import React, { Component } from "react";
 import "./App.css";
 import Dropdown from "./components/Dropdown";
@@ -12,7 +12,7 @@ import About from "./components/About";
 import Footer from "./components/Footer";
 import Loading from "./components/Loading";
 import GuessButton from "./components/GuessButton";
-const maxFetch = 8;
+const maxFetch = 5;
 
 function App() {
   const aiCategory = "ai";
@@ -25,7 +25,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
-  const [contentType, setContentType] = useState("image");
+  const [contentType, setContentType] = useState("video");
   const curAiSubreddit = contentType == "image" ? "aiArt" : "aivideos";
   const curHumanSubreddit = contentType == "image" ? "art" : "animations";
   const [arts, setArts] = useState(null);
@@ -33,8 +33,10 @@ function App() {
     ai: { aiArt: "", aivideos: "" },
     human: { art: "", animations: "" },
   });
-  const AI_URL = `https://www.reddit.com/r/${curAiSubreddit}/${currentSorts.ai}/.json?limit=${maxFetch}&after=${afters.ai[curAiSubreddit]}`;
-  const HUMAN_URL = `https://www.reddit.com/r/${curHumanSubreddit}/${currentSorts.human}/.json?limit=${maxFetch}&after=${afters.human[curHumanSubreddit]}`;
+  // const AI_URL = `https://www.reddit.com/r/${curAiSubreddit}/${currentSorts.ai}/.json?limit=${maxFetch}&after=${afters.ai[curAiSubreddit]}`;
+  // const HUMAN_URL = `https://www.reddit.com/r/${curHumanSubreddit}/${currentSorts.human}/.json?limit=${maxFetch}&after=${afters.human[curHumanSubreddit]}`;
+  const AI_URL = `/.netlify/functions/reddit?subReddit=${curAiSubreddit}&sort=${currentSorts.ai}&limit=${maxFetch}&after=${afters.ai[curAiSubreddit]}`;
+  const HUMAN_URL = `/.netlify/functions/reddit?subReddit=${curHumanSubreddit}&sort=${currentSorts.human}&limit=${maxFetch}&after=${afters.human[curHumanSubreddit]}`;
   const artArray = !arts ? [] : [...arts.ai, ...arts.human];
   // console.log(artArray);
   const currArt = artArray.length > 0 ? artArray[0] : null;
@@ -43,20 +45,24 @@ function App() {
   // console.log(afters)
   // console.log(AI_URL);
   // console.log(HUMAN_URL);
-  // ************** QQQQ
   useEffect(() => {
-    async function fetchAndRenderOne() {
-      const type = Math.round(Math.random()) == 0 ? humanCategory : aiCategory;
-      const url = type === humanCategory ? HUMAN_URL : AI_URL;
-      setLoading(true);
-      const data = await fetchRes(url);
-      if (data) {
-        updateData(type, data);
-      }
-      setLoading(false);
-    }
     fetchAndRenderOne();
   }, [currentSorts, round, contentType]);
+
+  async function fetchAndRenderOne() {
+    const type = Math.round(Math.random()) == 0 ? humanCategory : aiCategory;
+    const url = type === humanCategory ? HUMAN_URL : AI_URL;
+    setLoading(true);
+    const res = await fetch(url);
+
+    const data = await res.json();
+    console.log(data);
+    if (data) {
+      updateData(type, data);
+    }
+    setLoading(false);
+    
+  }
 
   function resetAfters(category) {
     if (category === "ai") {
@@ -78,22 +84,6 @@ function App() {
     }
   }
 
-  // fetch and return the Reddit data according to the url
-  async function fetchRes(url) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const data = await res.json();
-      console.log("Check out the fetched data");
-      console.log(data.data);
-      return data;
-    } catch (e) {
-      console.error("Fetch failed:", e);
-      throw e; // propagate the error
-    }
-  }
   function updateData(type, data) {
     if (type === humanCategory) {
       // console.log(type + " is being updated");
@@ -127,28 +117,6 @@ function App() {
   }
 
   function getArts(postCategory, allPosts, artNum) {
-    function extractYoutubeId(url, type) {
-      let startIndex = url.indexOf("watch?v=");
-      if (startIndex === -1) {
-        if (type === "youtu.be") {
-          startIndex = 17;
-        } else if (type === "youtube.com" && url.indexOf("/shorts/")) {
-          startIndex = url.indexOf("youtube.com/shorts/");
-          startIndex += 19;
-        }
-      } else {
-        startIndex += 8;
-      }
-      if (type === "youtu.be") {
-        return url.substring(startIndex, url.length);
-      } else if (type === "youtube.com") {
-        const andIndex = url.indexOf("&");
-        return andIndex == -1
-          ? url.substring(startIndex, url.length)
-          : url.substring(startIndex, andIndex);
-      }
-      return null;
-    }
     const sfw = true;
     let count = 0;
     const tempArr = [];
@@ -246,6 +214,7 @@ function App() {
         // console.log("art index: " + n);
 
         src = currPost.secure_media.reddit_video.fallback_url;
+        console.log("MY LINK:  " + currPost.url + "/DASH_AUDIO_64.mp4");
         tempArr.push({
           category: postCategory,
           subreddit: currPost.subreddit,
@@ -417,7 +386,7 @@ function App() {
                       <YouTube art={art} key={art.id}></YouTube>
                     ) : (
                       <Video art={art} key={art.id}></Video>
-                    )
+                    ),
                   )
                 )}
               </div>
@@ -461,94 +430,3 @@ function App() {
 }
 
 export default App;
-
-// async function fetchResults(ai_url, human_url) {
-//   try {
-//     const responses = await Promise.all([fetch(ai_url), fetch(human_url)]);
-
-//     if (responses.every((res) => res.ok)) {
-//       const [ai, human] = await Promise.all(responses.map((r) => r.json()));
-//       console.log(ai.data.children);
-//       console.log(human.data.children);
-//       // console.log(human.data.after);
-//       // console.log(ai.data.after);
-//       return { ai, human };
-//       // console.log(afters);
-//     } else {
-//       throw new Error("One or more responses are not OK");
-//     }
-//   } catch (e) {
-//     console.error(e);
-//   }
-// }
-// function updateDataults(ai, human) {
-//   setAfters({
-//     ...afters,
-//     ai: ai.data.after,
-//     human: human.data.after,
-//   });
-
-//   const tempArts = {
-//     human: getArts(humanCategory, human.data.children, 0),
-//     ai: getArts(aiCategory, ai.data.children, 1),
-//   };
-//   setArts(tempArts);
-// }
-
-// function updateURL() {
-//   AI_URL = `https://www.reddit.com/r/aiArt/${currentSorts.aiSort}/.json?limit=10&after=${afters.ai}`;
-//   HUMAN_URL = `https://www.reddit.com/r/DigitalArt/${currentSorts.humanSort}/.json?limit=10&after=${afters.human}`;
-// }
-
-// async function fetchResults(AI_URL, HUMAN_URL) {
-//   Promise.all([fetch(AI_URL), fetch(HUMAN_URL)])
-//     .then((res) => {
-//       if (Promise.all(res.map((item) => item.ok))) {
-//         // console.log(res[0].ok + " and " + res[1].ok);
-//         return Promise.all(res.map((r) => r.json()));
-//       }
-//       throw new Error("Something went wrong in first then");
-//     })
-//     .then(([ai, human]) => {
-//       console.log(ai.data.children);
-//       console.log(human.data.children);
-//       console.log(human.data.after);
-//       console.log(ai.data.after);
-//       updateDataults(ai, human);
-//       console.log(afters);
-//     })
-//     .catch((e) => {
-//       console.log(e);
-//     });
-// }
-
-// TEST fetch
-// async function fetchThis() {
-//   try {
-//     // Make the API request
-//     const res = await fetch(
-//       "https://www.reddit.com/search/.json?q=fun&type=communities&iId=71209918-c040-4756-ad67-b5a644785fc1"
-//     );
-
-//     // Check if the request was successful (status code 200)
-//     if (!res.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-
-//     // Parse the JSON response
-//     const data = await res.json();
-//     return data;
-//   } catch (e) {
-//     console.log("Error:", e);
-//   }
-// }
-
-// async function testFetch() {
-//   const data = await fetchThis();
-//   if (data) {
-//     // Log the JSON data (usually you'll want to process it further)
-//     console.log(data);
-//   }
-// }
-
-// testFetch();
