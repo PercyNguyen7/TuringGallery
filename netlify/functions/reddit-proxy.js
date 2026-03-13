@@ -13,7 +13,7 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const redditUrl = `https://api.reddit.com/r/${subreddit}/${sort}/.json?limit=${limit}&after=${after}`;
+  const redditUrl = `https://api.reddit.com/r/${subreddit}/${sort}.json?limit=${limit}&after=${after}`;
 
   try {
     const response = await fetch(redditUrl, {

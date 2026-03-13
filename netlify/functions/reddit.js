@@ -1,7 +1,7 @@
 export async function handler(event) {
   const { subReddit, sort, limit, after } = event.queryStringParameters;
 
-  const url = `https://www.reddit.com/r/${subReddit}/${sort}.json?limit=${limit}&after=${after}`;
+  const url = `https://api.reddit.com/r/${subReddit}/${sort}.json?limit=${limit}&after=${after}`;
 
   try {
     const response = await fetch(url, {
